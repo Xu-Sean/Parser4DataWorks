@@ -1,0 +1,45 @@
+setwd("D:\\munifex\\")
+
+df_DB_OBJCs <- read.table(file, header = FALSE, sep = "\t", dec = ".")
+
+v_files <- list.files(".", pattern = "\\.sql", recursive = TRUE)
+
+class(l_files)
+
+
+v_files 
+v_scripts <- unlist(lapply(X = v_files, FUN = readChar, max(file.info(v_files)$size)))
+
+
+v_scripts_wocomment <- 
+gsub(
+  "('(''|[^'])*')|[\t\r\n]|(--[^\r\n]*)|(/\\*[\\w\\W]*?(?=\\*/)\\*/)"
+  #https://larrysteinle.com/2011/02/09/use-regular-expressions-to-clean-sql-statements/
+  ,
+  "",
+  v_scripts,
+  perl = T
+)
+
+v_scripts_wocomment <-
+
+gsub(
+  pattern = "[\t\r\n ;]+",
+  " ",
+  x = v_scripts_wocomment
+)
+
+grepl(pattern = "database.table", x = v_scripts_wocomment, fixed = T)
+
+grepl(pattern = v_objc, x = v_scripts_wocomment, fixed = T)
+
+v_objc <- c("database.table", "sample")
+
+l_detect <- lapply(X = v_objc, FUN = grepl, v_scripts_wocomment, fixed = T)
+
+
+df_script_times_object <- as.data.frame(l_detect, col.names = v_objc, row.names = v_files)
+
+df_script_times_object
+
+                    
